@@ -1,0 +1,149 @@
+{
+    "id": 1,
+    "name": "{{ vorta.borg.user }}",
+    "repo": {
+        "url": "{{ vorta.borg.repo_url }}",
+        "encryption": "repokey-blake2",
+        "unique_size": null,
+        "unique_csize": null,
+        "total_size": null,
+        "total_unique_chunks": null,
+        "create_backup_cmd": "",
+        "extra_borg_arguments": "--remote-path=/usr/local/bin/borg"
+    },
+    "ssh_key": null,
+    "compression": "lz4",
+    "exclude_patterns": "/home/{{ vorta.borg.user }}/.Trash\n/home/{{ vorta.borg.user }}/.local/share/Trash\n/home/{{ vorta.borg.user }}/.cache/*",
+    "exclude_if_present": null,
+    "schedule_mode": "interval",
+    "schedule_interval_count": 3,
+    "schedule_interval_unit": "hours",
+    "schedule_fixed_hour": 3,
+    "schedule_fixed_minute": 42,
+    "schedule_interval_hours": 3,
+    "schedule_interval_minutes": 42,
+    "schedule_make_up_missed": true,
+    "validation_on": true,
+    "validation_weeks": 3,
+    "prune_on": true,
+    "prune_hour": 2,
+    "prune_day": 7,
+    "prune_week": 4,
+    "prune_month": 3,
+    "prune_year": 0,
+    "prune_keep_within": "24H",
+    "new_archive_name": "{hostname}-{now:%Y-%m-%d-%H%M%S}",
+    "prune_prefix": "{hostname}-",
+    "pre_backup_cmd": "",
+    "post_backup_cmd": "",
+    "dont_run_on_metered_networks": true,
+    "password": "{{ borg_pw }}",
+    "SourceFileModel": [
+        {
+            "dir": "/home/{{ vorta.borg.user }}",
+            "profile": 1
+        }
+    ],
+    "SchemaVersion": {
+        "id": 1,
+        "version": 19
+    },
+    "SettingsModel": [
+        {
+            "key": "enable_notifications",
+            "value": true,
+            "str_value": "",
+            "label": "Display notifications when background tasks fail",
+            "group": "Notifications",
+            "type": "checkbox"
+        },
+        {
+            "key": "enable_notifications_success",
+            "value": false,
+            "str_value": "",
+            "label": "Also notify about successful background tasks",
+            "group": "Notifications",
+            "type": "checkbox"
+        },
+        {
+            "key": "autostart",
+            "value": true,
+            "str_value": "",
+            "label": "Automatically start Vorta at login",
+            "group": "Startup",
+            "type": "checkbox"
+        },
+        {
+            "key": "foreground",
+            "value": false,
+            "str_value": "",
+            "label": "Open main window on startup",
+            "group": "Startup",
+            "type": "checkbox"
+        },
+        {
+            "key": "get_srcpath_datasize",
+            "value": true,
+            "str_value": "",
+            "label": "Get statistics of file/folder when added",
+            "group": "Information",
+            "type": "checkbox"
+        },
+        {
+            "key": "use_system_keyring",
+            "value": true,
+            "str_value": "",
+            "label": "Store repository passwords in system keychain, if available",
+            "group": "Security",
+            "type": "checkbox"
+        },
+        {
+            "key": "override_mount_permissions",
+            "value": false,
+            "str_value": "",
+            "label": "Try to replace existing permissions when mounting an archive",
+            "group": "Security",
+            "type": "checkbox"
+        },
+        {
+            "key": "previous_profile_id",
+            "value": false,
+            "str_value": "1",
+            "label": "Previously selected profile",
+            "group": "",
+            "type": "internal"
+        },
+        {
+            "key": "previous_window_width",
+            "value": false,
+            "str_value": "1315",
+            "label": "Previous window width",
+            "group": "",
+            "type": "internal"
+        },
+        {
+            "key": "previous_window_height",
+            "value": false,
+            "str_value": "600",
+            "label": "Previous window height",
+            "group": "",
+            "type": "internal"
+        },
+        {
+            "key": "enable_background_question",
+            "value": true,
+            "str_value": "",
+            "label": "If the system tray isn't available, ask whether to continue in the background on exit",
+            "group": "",
+            "type": "checkbox"
+        },
+        {
+            "key": "disable_background_state",
+            "value": true,
+            "str_value": "",
+            "label": "Previous background exit button state",
+            "group": "",
+            "type": "internal"
+        }
+    ]
+}

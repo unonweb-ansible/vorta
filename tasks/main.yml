@@ -1,0 +1,69 @@
+---
+# NOTES
+# -----
+# - Import config
+#   To trigger an import on startup place a file called .vorta-init.json in the user’s home directory. 
+#   During the next startup, Vorta will import and then delete this file.
+# - Eventuell muss auf einem neuen Gerät einmalig ein Login per SSH erfolgen!
+# - borg_pw wird zum Entschlüsseln des Repos verwendet und ist daher user-spezifisch!
+# - borg_user wird für den Pfad zum Repository gebraucht und ist daher user-spezifisch!
+# - ssh-keys werden zum login des borg-backup users verwendet, sind global und werden im Home-Verzeichnis des Users gespeichert.
+
+# ATTENTION
+# ---------
+
+- name: vorta role
+  tags:
+    - vorta
+  block:
+
+  # flatpak
+  - when: vorta.flatpak.state != None
+    name: Flatpak state {{ vorta.flatpak.state }}
+    become: true
+    community.general.flatpak:
+      name: com.borgbase.Vorta
+      method: "{{ vorta.flatpak.scope }}" 
+      state: "{{ vorta.flatpak.state }}"
+  
+  # apt
+  - when: vorta.apt.state != None
+    name: Apt state {{ vorta.apt.state }}
+    become: true
+    ansible.builtin.apt:
+      name: vorta
+      state: "{{ vorta.apt.state }}"
+      
+  # template config
+  - when: vorta.config.init == true
+    name: Template vorta config
+    become: true
+    become_user: "{{ vorta.user }}"
+    ansible.builtin.template:
+      src: "{{ vorta.config.src }}"
+      dest: "/home/{{ vorta.user }}/.vorta-init.json"
+      owner: "{{ vorta.user }}"
+      group: "{{ vorta.user }}"
+
+  # copy ssh keys
+  - block:
+    
+    # cp priv key
+    - name: Copy private ssh key
+      become: true
+      ansible.builtin.copy:
+        src: "{{ vorta.borg.ssh_private_key_file }}"
+        dest: "/home/{{ vorta.user }}/.ssh/id_ed25519_borgbackup"
+        owner: "{{ vorta.user }}"
+        group: "{{ vorta.user }}"
+        mode: u=rw,g=,o=
+
+    # cp pup key
+    - name: Copy public ssh key
+      become: true
+      ansible.builtin.copy:
+        src: "{{ vorta.borg.ssh_public_key_file }}"
+        dest: "/home/{{ vorta.user }}/.ssh/id_ed25519_borgbackup.pub"
+        owner: "{{ vorta.user }}"
+        group: "{{ vorta.user }}"
+        mode: u=rw,g=r,o=r
