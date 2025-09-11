@@ -2,3 +2,5 @@ files/id_ed25519_borgbackup
 files/id_ed25519_borgbackup.pub
 templates/.vorta.udo.json.j2
 templates/vorta.franzk.json.j2
+files/id_ed25519_borg-backup
+files/id_ed25519_borg-backup.pub
