@@ -5,8 +5,8 @@
 #   To trigger an import on startup place a file called .vorta-init.json in the user’s home directory. 
 #   During the next startup, Vorta will import and then delete this file.
 # - Eventuell muss auf einem neuen Gerät einmalig ein Login per SSH erfolgen!
+# - Falls das Repository noch nicht besteht, muss es einmal über Vorta angelegt werden
 # - borg_pw wird zum Entschlüsseln des Repos verwendet und ist daher user-spezifisch!
-# - borg_user wird für den Pfad zum Repository gebraucht und ist daher user-spezifisch!
 # - ssh-keys werden zum login des borg-backup users verwendet, sind global und werden im Home-Verzeichnis des Users gespeichert.
 
 # ATTENTION
@@ -17,6 +17,11 @@
     - vorta
   block:
 
+  - name: Check vars for vorta role
+    ansible.builtin.assert:
+      that:
+      - vorta.user != None
+      
   # flatpak
   - when: vorta.flatpak.state != None
     name: Flatpak state {{ vorta.flatpak.state }}
@@ -36,9 +41,8 @@
       
   # template config
   - when: vorta.config.init == true
-    name: Template vorta config
+    name: Template config {{ vorta.config.src }}
     become: true
-    become_user: "{{ vorta.user }}"
     ansible.builtin.template:
       src: "{{ vorta.config.src }}"
       dest: "/home/{{ vorta.user }}/.vorta-init.json"
@@ -52,8 +56,8 @@
     - name: Copy private ssh key
       become: true
       ansible.builtin.copy:
-        src: "{{ vorta.borg.ssh_private_key_file }}"
-        dest: "/home/{{ vorta.user }}/.ssh/id_ed25519_borgbackup"
+        src: "{{ vorta.nas.borg_ssh_private_key_file }}"
+        dest: "/home/{{ vorta.user }}/.ssh/{{ vorta.nas.borg_ssh_private_key_file }}"
         owner: "{{ vorta.user }}"
         group: "{{ vorta.user }}"
         mode: u=rw,g=,o=
@@ -62,8 +66,8 @@
     - name: Copy public ssh key
       become: true
       ansible.builtin.copy:
-        src: "{{ vorta.borg.ssh_public_key_file }}"
-        dest: "/home/{{ vorta.user }}/.ssh/id_ed25519_borgbackup.pub"
+        src: "{{ vorta.nas.borg_ssh_public_key_file }}"
+        dest: "/home/{{ vorta.user }}/.ssh/{{ vorta.nas.borg_ssh_public_key_file }}"
         owner: "{{ vorta.user }}"
         group: "{{ vorta.user }}"
         mode: u=rw,g=r,o=r

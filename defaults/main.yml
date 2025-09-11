@@ -4,12 +4,11 @@ vorta:
   config:
     init: false
     src: vorta.franzk.json.j2
-  borg:
-    user:
-    pw:
-    repo_url:
-    ssh_private_key_file: id_ed25519_borgbackup
-    ssh_public_key_file: id_ed25519_borgbackup.pub
+    borg:
+      pw:
+  nas:
+    borg_ssh_private_key_file: id_ed25519_borg-backup
+    borg_ssh_public_key_file: id_ed25519_borg-backup.pub
   flatpak:
     state: present
     scope: system
