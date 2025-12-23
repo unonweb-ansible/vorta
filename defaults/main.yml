@@ -1,16 +1,9 @@
 ---
-vorta:
-  user:
-  config:
-    init: false
-    src: vorta.franzk.json.j2
-    borg:
-      pw:
-  nas:
-    borg_ssh_private_key_file: id_ed25519_borg-backup
-    borg_ssh_public_key_file: id_ed25519_borg-backup.pub
-  flatpak:
-    state: present
-    scope: system
-  apt:
-    state: absent
+vorta_user:
+vorta_config:
+vorta_config_init: false
+vorta_config_borg_pw:
+vorta_nas_borg_ssh_private_key_file:
+vorta_flatpak_scope: system
+vorta_flatpak_state: present
+vorta_apt_state: absent

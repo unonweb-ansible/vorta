@@ -1,17 +1,4 @@
 ---
-# NOTES
-# -----
-# - Import config
-#   To trigger an import on startup place a file called .vorta-init.json in the user’s home directory. 
-#   During the next startup, Vorta will import and then delete this file.
-# - Eventuell muss auf einem neuen Gerät einmalig ein Login per SSH erfolgen!
-# - Falls das Repository noch nicht besteht, muss es einmal über Vorta angelegt werden
-# - borg_pw wird zum Entschlüsseln des Repos verwendet und ist daher user-spezifisch!
-# - ssh-keys werden zum login des borg-backup users verwendet, sind global und werden im Home-Verzeichnis des Users gespeichert.
-
-# ATTENTION
-# ---------
-
 - name: vorta role
   tags:
     - vorta
@@ -20,35 +7,35 @@
   - name: Check vars for vorta role
     ansible.builtin.assert:
       that:
-      - vorta.user != None
-      - vorta.config.borg.pw != None
+      - vorta_user != None
+      - vorta_config_borg_pw != None
       
   # flatpak
-  - when: vorta.flatpak.state != None
-    name: Flatpak state {{ vorta.flatpak.state }}
+  - when: vorta_flatpak_state != None
+    name: Flatpak state {{ vorta_flatpak_state }}
     become: true
     community.general.flatpak:
       name: com.borgbase.Vorta
-      method: "{{ vorta.flatpak.scope }}" 
-      state: "{{ vorta.flatpak.state }}"
+      method: "{{ vorta_flatpak_scope }}" 
+      state: "{{ vorta_flatpak_state }}"
   
   # apt
-  - when: vorta.apt.state != None
-    name: Apt state {{ vorta.apt.state }}
+  - when: vorta_apt_state != None
+    name: Apt state {{ vorta_apt_state }}
     become: true
     ansible.builtin.apt:
       name: vorta
-      state: "{{ vorta.apt.state }}"
+      state: "{{ vorta_apt_state }}"
       
   # template config
-  - when: vorta.config.init == true
-    name: Template config {{ vorta.config.src }}
+  - when: vorta_config_init == true
+    name: Template config {{ vorta_config }}
     become: true
     ansible.builtin.template:
-      src: "{{ vorta.config.src }}"
-      dest: "/home/{{ vorta.user }}/.vorta-init.json"
-      owner: "{{ vorta.user }}"
-      group: "{{ vorta.user }}"
+      src: "{{ vorta_config }}"
+      dest: "/home/{{ vorta_user }}/.vorta-init.json"
+      owner: "{{ vorta_user }}"
+      group: "{{ vorta_user }}"
 
   # copy ssh keys
   - block:
@@ -57,18 +44,8 @@
     - name: Copy private ssh key
       become: true
       ansible.builtin.copy:
-        src: "{{ vorta.nas.borg_ssh_private_key_file }}"
-        dest: "/home/{{ vorta.user }}/.ssh/{{ vorta.nas.borg_ssh_private_key_file }}"
-        owner: "{{ vorta.user }}"
-        group: "{{ vorta.user }}"
+        src: "{{ vorta_nas_borg_ssh_private_key_file }}"
+        dest: "/home/{{ vorta_user }}/.ssh/{{ vorta_nas_borg_ssh_private_key_file }}"
+        owner: "{{ vorta_user }}"
+        group: "{{ vorta_user }}"
         mode: u=rw,g=,o=
-
-    # cp pup key
-    - name: Copy public ssh key
-      become: true
-      ansible.builtin.copy:
-        src: "{{ vorta.nas.borg_ssh_public_key_file }}"
-        dest: "/home/{{ vorta.user }}/.ssh/{{ vorta.nas.borg_ssh_public_key_file }}"
-        owner: "{{ vorta.user }}"
-        group: "{{ vorta.user }}"
-        mode: u=rw,g=r,o=r
