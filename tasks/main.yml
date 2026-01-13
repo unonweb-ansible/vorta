@@ -18,7 +18,28 @@
       name: com.borgbase.Vorta
       method: "{{ vorta_flatpak_scope }}" 
       state: "{{ vorta_flatpak_state }}"
-  
+
+  # mkdir overrides
+  - name: Mkdir /home/{{ vorta_user }}/.local/share/flatpak/overrides
+    become: true
+    ansible.builtin.file:
+      state: directory
+      mode: u=rwx,g=,o=rx
+      owner: "{{ vorta_user }}"
+      group: "{{ vorta_user }}"
+      path: "/home/{{ vorta_user }}/.local/share/flatpak/overrides"
+
+  # copy flatpak override
+  - when: vorta_flatpak_override != None
+    name: Copy {{ vorta_flatpak_override }} -> /home/{{ vorta_user }}/.local/share/flatpak/overrides/com.borgbase.Vorta
+    become: true
+    ansible.builtin.copy:
+      src: "{{ vorta_flatpak_override }}"
+      dest: "/home/{{ vorta_user }}/.local/share/flatpak/overrides/com.borgbase.Vorta"
+      owner: "{{ vorta_user }}"
+      group: "{{ vorta_user }}"
+      mode: u=rw,g=,o=r # world readable
+
   # apt
   - when: vorta_apt_state != None
     name: Apt state {{ vorta_apt_state }}
