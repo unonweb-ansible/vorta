@@ -6,5 +6,5 @@ vorta_config_borg_pw:
 vorta_nas_borg_ssh_private_key_file:
 vorta_flatpak_scope: system
 vorta_flatpak_state: present
-vorta_flatpak_override: "{{ role_path }}/files/flatpak.override"
+vorta_flatpak_override: "{{ role_path }}/files/flatpak_override"
 vorta_apt_state: absent
